@@ -23,6 +23,8 @@ import androidx.annotation.NonNull;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -179,11 +181,11 @@ public class ConnectionState {
 
     void toggleArchiveItem(JiveItem item) {
         if (item.getNode().equals(JiveItem.ARCHIVE.getId())) {
-            item.setNode(item.getOldNodeWhenArchived());
+            item.setNode(item.getOriginalNode());
         }
         else {
-            if (item.getId() != JiveItem.ARCHIVE.getId()) {
-                item.setOldNodeWhenArchived(item.getNode());
+            if (!item.getId().equals(JiveItem.ARCHIVE.getId())) {
+                cleanupArchive(item);
                 item.setNode(JiveItem.ARCHIVE.getId());
             }
         }
@@ -191,6 +193,53 @@ public class ConnectionState {
             homeMenu.add(JiveItem.ARCHIVE);
             mEventBus.postSticky(new HomeMenuEvent(homeMenu));
         }
+    }
+
+    private MenuNode buildHomeMenu(JiveItem root) {
+        MenuNode node = new MenuNode(root);
+        for (JiveItem item : homeMenu) {
+            if (node.root.getId().equals(item.getNode())) {
+                node.items.add(buildHomeMenu(item));
+            }
+        }
+        return node;
+    }
+
+    private MenuNode buildOriginalHomeMenu(JiveItem root) {
+        MenuNode node = new MenuNode(root);
+        for (JiveItem item : homeMenu) {
+            if (node.root.getId().equals(item.getOriginalNode())) {
+                node.items.add(buildOriginalHomeMenu(item));
+            }
+        }
+        return node;
+    }
+
+    private void cleanupArchive(JiveItem item) {
+        MenuNode node = buildOriginalHomeMenu(item);
+        MenuNode archive = buildHomeMenu(JiveItem.ARCHIVE);
+        cleanupArchive(node, archive);
+    }
+
+    private void cleanupArchive(MenuNode node, MenuNode archive) {
+        if (findItem(archive.root.getId(), node)) {
+            archive.root.setNode(archive.root.getOriginalNode());
+        }
+        for (MenuNode item : archive.items) {
+            cleanupArchive(node, item);
+        }
+    }
+
+    private boolean findItem(String id, MenuNode root) {
+        if (root.root.getId().equals(id)) {
+            return true;
+        }
+        for (MenuNode item : root.items) {
+            if (findItem(id, item)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     String getServerVersion() {
@@ -231,11 +280,27 @@ public class ConnectionState {
         return connectionState == CONNECTION_STARTED;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "ConnectionState{" +
                 "mConnectionState=" + mConnectionState +
                 ", serverVersion=" + serverVersion +
                 '}';
+    }
+
+    private static class MenuNode {
+        JiveItem root;
+        Collection<MenuNode> items = new HashSet<>();
+
+        public MenuNode(JiveItem root) {
+            this.root = root;
+        }
+
+        @NonNull
+        @Override
+        public String toString() {
+            return root.getId();
+        }
     }
 }

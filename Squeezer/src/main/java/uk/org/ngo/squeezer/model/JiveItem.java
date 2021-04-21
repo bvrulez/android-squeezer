@@ -103,7 +103,7 @@ public class JiveItem extends Item {
     @NonNull private final Uri icon;
 
     private String node;
-    private String oldNodeWhenArchived;
+    private String originalNode;
     private int weight;
     private String type;
 
@@ -263,6 +263,14 @@ public class JiveItem extends Item {
         return node;
     }
 
+    public void setNode(String node) {
+        this.node = node;
+    }
+
+    public String getOriginalNode() {
+        return originalNode;
+    }
+
     public int getWeight() {
         return weight;
     }
@@ -285,7 +293,7 @@ public class JiveItem extends Item {
         setId(getString(record, record.containsKey("cmd") ? "cmd" : "id"));
         splitItemText(getStringOrEmpty(record, record.containsKey("name") ? "name" : "text"));
         icon = getImageUrl(record, record.containsKey("icon-id") ? "icon-id" : "icon");
-        node = getString(record, "node");
+        node = originalNode = getString(record, "node");
         weight = getInt(record, "weight");
         type = getString(record, "type");
         Map<String, Object> baseRecord = getRecord(record, "base");
@@ -682,16 +690,4 @@ public class JiveItem extends Item {
         return map;
     }
     private static final Set<String> title_parameters = new HashSet<>(Arrays.asList("track_id", "album_id", "artist_id", "genre_id", "year"));
-
-    public void setNode(String node) {
-        this.node = node;
-    }
-
-    public void setOldNodeWhenArchived(String node) {
-        this.oldNodeWhenArchived = this.node;
-    }
-
-    public String getOldNodeWhenArchived() {
-        return this.oldNodeWhenArchived;
-    }
 }
