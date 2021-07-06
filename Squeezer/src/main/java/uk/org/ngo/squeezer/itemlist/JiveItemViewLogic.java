@@ -17,6 +17,7 @@
 package uk.org.ngo.squeezer.itemlist;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -101,7 +102,10 @@ public class JiveItemViewLogic implements IServiceItemListCallback<JiveItem>, Po
         }
     }
 
+    private static final String TAG = "JiveItemViewLogic";
+
     private void showContextMenu(ViewParamItemView<JiveItem> viewHolder, JiveItem item, Action action) {
+        Log.d(TAG, "showContextMenu: BEN");
         contextMenuViewHolder = viewHolder;
         contextStack = 1;
         contextMenuItem = item;
@@ -149,21 +153,34 @@ public class JiveItemViewLogic implements IServiceItemListCallback<JiveItem>, Po
     }
 
     private void showContextMenu(final ViewParamItemView<JiveItem> viewHolder, final List<JiveItem> items) {
+        Log.d(TAG, "showContextMenu: BEN");
         Preferences preferences = new Preferences(activity);
         contextPopup = new PopupMenu(activity, viewHolder.contextMenuButtonHolder);
         Menu menu = contextPopup.getMenu();
+//        TODO: add menu to contextMenu
 
         int index = 0;
         if (preferences.isDownloadEnabled() && contextMenuItem != null && contextMenuItem.canDownload()) {
             menu.add(Menu.NONE, index++, Menu.NONE, R.string.DOWNLOAD);
         }
+        if (contextMenuItem != null) {
+            menu.add(Menu.NONE, index++, Menu.NONE, "Play random");
+        }
+
         final int offset = index;
         for (JiveItem jiveItem : items) {
+            Log.d(TAG, "showContextMenu: BEN add JiveItems: " + jiveItem.getName());
             menu.add(Menu.NONE, index++, Menu.NONE, jiveItem.getName()).setEnabled(jiveItem.goAction != null);
         }
 
         contextPopup.setOnMenuItemClickListener(menuItem -> {
-            if (menuItem.getItemId() < offset) {
+            if (menuItem.getItemId() == offset - 1) {
+                Log.d(TAG, "showContextMenu: BEN Random Play Clicked");
+                activity.randomPlayFolder(contextMenuItem);
+
+            }
+            else if (menuItem.getItemId() < offset) {
+//                Check if else if is ok
                 activity.downloadItem(contextMenuItem);
             } else {
                 doItemContext(viewHolder, items.get(menuItem.getItemId() - offset));
@@ -184,6 +201,7 @@ public class JiveItemViewLogic implements IServiceItemListCallback<JiveItem>, Po
     }
 
     private void orderContextMenu(Action action) {
+        Log.d(TAG, "orderContextMenu: BEN");
         ISqueezeService service = activity.getService();
         if (service != null) {
             contextMenuViewHolder.contextMenuButton.setVisibility(View.GONE);
@@ -199,6 +217,7 @@ public class JiveItemViewLogic implements IServiceItemListCallback<JiveItem>, Po
 
     @Override
     public void onItemsReceived(int count, int start, final Map<String, Object> parameters, final List<JiveItem> items, Class<JiveItem> dataType) {
+        Log.d(TAG, "onItemsReceived: BEN");
         activity.runOnUiThread(() -> {
                 // If #resetContextMenu has been called while we were in the main looper #contextMenuViewHolder will be null, so skip the items
                 if (contextMenuViewHolder != null) {

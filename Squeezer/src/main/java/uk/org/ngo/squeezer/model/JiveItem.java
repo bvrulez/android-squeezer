@@ -22,6 +22,7 @@ import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Parcel;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
@@ -632,6 +633,7 @@ public class JiveItem extends Item {
     }
 
     private SlimCommand extractDownloadAction(Map<String, Object> record) {
+        Log.d(TAG, "extractDownloadAction: BEN");        
         if ("local".equals(getString(record, "trackType")) && (goAction != null || moreAction != null)) {
             Action action = (moreAction != null ? moreAction : goAction);
             String trackId = getStringOrEmpty(action.action.params, "track_id");

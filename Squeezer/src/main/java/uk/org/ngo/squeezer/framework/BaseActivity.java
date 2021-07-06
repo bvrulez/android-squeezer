@@ -511,6 +511,13 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
         }
     }
 
+    public void randomPlayFolder(JiveItem item) {
+//        gets called by JiveItemViewLogic.showContextMenu
+        Log.d(TAG, "randomPlayFolder: BEN item: " + item.getName());
+//        TODO: Load saved play status ?
+        mService.randomPlayFolder(item);
+    }
+
     @Override
     public void doDownload(JiveItem item) {
         if (Build.VERSION_CODES.M <= Build.VERSION.SDK_INT && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
