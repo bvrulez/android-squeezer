@@ -24,9 +24,14 @@ import androidx.annotation.NonNull;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import de.greenrobot.event.EventBus;
 import uk.org.ngo.squeezer.Util;
@@ -170,6 +175,18 @@ public class ConnectionState {
             mHomeMenuHandling.handleMenuStatusEvent(event);
         }
     }
+
+    Map<String, Set<String>> itemsInFolders = new HashMap<>();
+
+    public void addToSetOfIDs(String folderID, Set<String> stringSetOfFifty) {
+//        called from SlimDelegate: mClient.getConnectionState().addToSetOfIDs(stringSetOfFifty);
+        Log.d(TAG, "addToSetOfIDs: BEN with stringSetOfFifty.size(): " + stringSetOfFifty.size());
+        BiFunction<Set<String>, Set<String>, Set<String>> biFunction = (set1, set2) -> set1 == null ? set1 : Stream.concat(set1.stream(), set2.stream())
+                .collect(Collectors.toSet());;
+        itemsInFolders.merge(folderID, stringSetOfFifty, biFunction);
+        Log.d(TAG, "addToSetOfIDs: BEN istemsInFolders folderID: " + folderID + " with size: " + itemsInFolders.get(folderID).size());
+    }
+
 
     String getServerVersion() {
         return serverVersion.get();

@@ -16,10 +16,18 @@
 
 package uk.org.ngo.squeezer.service;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import de.greenrobot.event.EventBus;
 import uk.org.ngo.squeezer.itemlist.IServiceItemListCallback;
@@ -29,7 +37,12 @@ import uk.org.ngo.squeezer.model.PlayerState;
 import uk.org.ngo.squeezer.model.SlimCommand;
 
 class SlimDelegate {
+
+    private static final String TAG = "SlimDelegate";
+
     @NonNull private final SlimClient mClient;
+
+    Map<String, Set<String>> itemsInFolders = new HashMap<>();
 
     SlimDelegate(@NonNull EventBus eventBus) {
         mClient = new CometClient(eventBus);
@@ -103,6 +116,7 @@ class SlimDelegate {
     }
 
     <T> Request requestItems(int start, IServiceItemListCallback<T> callback) {
+        Log.d(TAG, "requestItems: BEN - return new Request<>");
         return new Request<>(mClient, start, callback);
     }
 
@@ -160,6 +174,12 @@ class SlimDelegate {
 
     public void triggerHomeMenuEvent() {
         mClient.getConnectionState().getHomeMenuHandling().triggerHomeMenuEvent();
+    }
+
+    public void addToSetOfIDs(String folderID, Set<String> stringSetOfFifty) {
+//        called from SqueezeService: mDelegate.
+        Log.d(TAG, "addToSetOfIDs: BEN");
+        mClient.getConnectionState().addToSetOfIDs(folderID, stringSetOfFifty);
     }
 
     static class Command extends SlimCommand {
@@ -232,8 +252,11 @@ class SlimDelegate {
             this(slimClient, player, start, BaseClient.mPageSize, callback);
         }
 
+        private static final String TAG = "Request";
+
         private Request(SlimClient slimClient, int start, IServiceItemListCallback<T> callback) {
             this(slimClient, null, start, BaseClient.mPageSize, callback);
+            Log.d(TAG, "Request: BEN");
         }
 
         private Request(SlimClient slimClient, int start, int pageSize, IServiceItemListCallback<T> callback) {

@@ -439,6 +439,8 @@ public class JiveItem extends Item {
     }
 
     public SlimCommand downloadCommand() {
+//      TODO: Remove
+//      BEN command: Command{cmd=[musicfolder], params={folder_id=209092, recursive=1, tags=cu}}
         return downloadCommand;
     }
 
@@ -633,7 +635,6 @@ public class JiveItem extends Item {
     }
 
     private SlimCommand extractDownloadAction(Map<String, Object> record) {
-        Log.d(TAG, "extractDownloadAction: BEN");        
         if ("local".equals(getString(record, "trackType")) && (goAction != null || moreAction != null)) {
             Action action = (moreAction != null ? moreAction : goAction);
             String trackId = getStringOrEmpty(action.action.params, "track_id");

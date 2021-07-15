@@ -515,7 +515,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Download
 //        gets called by JiveItemViewLogic.showContextMenu
         Log.d(TAG, "randomPlayFolder: BEN item: " + item.getName());
 //        TODO: Load saved play status ?
-        mService.randomPlayFolder(item);
+        mService.randomPlayFolder(item); // calls ISqueezeService.randomPlayFolder in SqueezeService
     }
 
     @Override
