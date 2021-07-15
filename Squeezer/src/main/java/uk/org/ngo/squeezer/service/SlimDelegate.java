@@ -189,6 +189,7 @@ class SlimDelegate {
         private Command(SlimClient slimClient, Player player) {
             this.slimClient = slimClient;
             this.player = player;
+            Log.d(TAG, "Command: BEN slimClient for this request: " + slimClient.getConnectionState().getActivePlayer());
         }
 
         private Command(SlimClient slimClient) {
@@ -246,6 +247,7 @@ class SlimDelegate {
             this.callback = callback;
             this.start = start;
             this.pageSize = pageSize;
+            Log.d(TAG, "Request2: BEN");
         }
 
         private Request(SlimClient slimClient, Player player, int start, IServiceItemListCallback<T> callback) {

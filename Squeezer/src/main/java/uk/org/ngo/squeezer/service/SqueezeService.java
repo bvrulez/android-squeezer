@@ -834,6 +834,7 @@ public class SqueezeService extends Service {
             }
             Log.d(TAG, "onItemsReceived: BEN got Set of IDs: " + stringSetOfFifty.toString());
             Log.d(TAG, "onItemsReceived: BEN size: " + stringSetOfFifty.size());
+            Log.d(TAG, "onItemsReceived: BEN parameters in callback: " + parameters.toString());
 //          TODO: reduce Set by Set of played items
             mDelegate.addToSetOfIDs(SqueezeService.this.folderID, stringSetOfFifty);
         }
@@ -843,6 +844,36 @@ public class SqueezeService extends Service {
             return null;
         }
     };
+
+    /** dummy for songs when calling random play */
+    private final IServiceItemListCallback<Song> songRandomPlayCallback = new IServiceItemListCallback<Song>() {
+        @Override
+        public void onItemsReceived(int count, int start, Map<String, Object> parameters, List<Song> items, Class<Song> dataType) {
+            final Preferences preferences = new Preferences(SqueezeService.this);
+            for (Song song : items) {
+                Log.d(TAG, "onItemsReceived BEN songRandomPlay: (" + song + ")");
+                Uri downloadUrl = Util.getDownloadUrl(mDelegate.getUrlPrefix(), song.id);
+                Log.d(TAG, "onItemsReceived: BEN Uri ");
+                if (preferences.isDownloadUseServerPath()) {
+                    Log.d(TAG, "onItemsReceived: BEN would download now");
+//                    downloadSong(downloadUrl, song.title, song.album, song.artist, getLocalFile(song.url));
+                } else {
+                    final String lastPathSegment = song.url.getLastPathSegment();
+                    final String fileExtension = Util.getFileExtension(lastPathSegment);
+                    final String localPath = song.getLocalPath(preferences.getDownloadPathStructure(), preferences.getDownloadFilenameStructure());
+                    Log.d(TAG, "onItemsReceived: BEN would download now also");
+//                    downloadSong(downloadUrl, song.title, song.album, song.artist, localPath + "." + fileExtension);
+                }
+            }
+        }
+
+        @Override
+        public Object getClient() {
+            return this;
+        }
+    };
+
+
 
 
     private void downloadSong(@NonNull Uri url, String title, String album, String artist, String localPath) {
@@ -1456,7 +1487,9 @@ public class SqueezeService extends Service {
                 Log.e(TAG, "randomPlayFolder: Exception while casting 'folder_id' to String" + e);
             }
             Log.d(TAG, "randomPlayFolder: BEN saved folderID to SqueezeService.this.folderID: " + folderID);
-            mDelegate.requestItems(-1,musicFolderRandomPlayCallback).params(command.params).cmd(command.cmd()).exec();
+            IServiceItemListCallback<?> callback = ("musicfolder".equals(command.cmd.get(0))) ? musicFolderRandomPlayCallback : songRandomPlayCallback;
+            Log.d(TAG, "randomPlayFolder: BEN callback: " + callback.toString());
+            mDelegate.requestItems(-1,callback).params(command.params).cmd(command.cmd()).exec();
         }
 
         public boolean toggleArchiveItem(JiveItem item) {
