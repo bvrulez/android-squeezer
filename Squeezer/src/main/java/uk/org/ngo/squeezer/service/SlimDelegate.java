@@ -42,8 +42,6 @@ class SlimDelegate {
 
     @NonNull private final SlimClient mClient;
 
-    Map<String, Set<String>> itemsInFolders = new HashMap<>();
-
     SlimDelegate(@NonNull EventBus eventBus) {
         mClient = new CometClient(eventBus);
     }

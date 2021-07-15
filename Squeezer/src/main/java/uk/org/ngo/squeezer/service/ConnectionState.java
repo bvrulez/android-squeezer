@@ -24,6 +24,7 @@ import androidx.annotation.NonNull;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -177,14 +178,23 @@ public class ConnectionState {
     }
 
     Map<String, Set<String>> itemsInFolders = new HashMap<>();
+    Map<String, Set<String>> playeditemsInFolders = new HashMap<>();
 
+//
     public void addToSetOfIDs(String folderID, Set<String> stringSetOfFifty) {
 //        called from SlimDelegate: mClient.getConnectionState().addToSetOfIDs(stringSetOfFifty);
         Log.d(TAG, "addToSetOfIDs: BEN with stringSetOfFifty.size(): " + stringSetOfFifty.size());
         BiFunction<Set<String>, Set<String>, Set<String>> biFunction = (set1, set2) -> set1 == null ? set1 : Stream.concat(set1.stream(), set2.stream())
-                .collect(Collectors.toSet());;
+                .collect(Collectors.toSet());
         itemsInFolders.merge(folderID, stringSetOfFifty, biFunction);
-        Log.d(TAG, "addToSetOfIDs: BEN istemsInFolders folderID: " + folderID + " with size: " + itemsInFolders.get(folderID).size());
+        Log.d(TAG, "addToSetOfIDs: BEN itemsInFolders folderID: " + folderID + " with size: " + itemsInFolders.get(folderID).size());
+    }
+
+    public void addToSetOfPlayedIDs(String folderID, Set<String> playedTracks) {
+        Log.d(TAG, "addToSetOfPlayedIDs: BEN add this set of tracks to set of played: " + playedTracks);
+        BiFunction<Set<String>, Set<String>, Set<String>> biFunction = (set1, set2) -> set1 == null ? set1 : Stream.concat(set1.stream(), set2.stream()).collect(Collectors.toSet());
+        playeditemsInFolders.merge(folderID, playedTracks, biFunction);
+        Log.d(TAG, "addToSetOfPlayedIDs: BEN played tracks");
     }
 
 

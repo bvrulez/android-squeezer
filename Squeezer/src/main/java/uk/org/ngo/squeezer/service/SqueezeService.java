@@ -837,6 +837,7 @@ public class SqueezeService extends Service {
             Log.d(TAG, "onItemsReceived: BEN parameters in callback: " + parameters.toString());
 //          TODO: reduce Set by Set of played items
             mDelegate.addToSetOfIDs(SqueezeService.this.folderID, stringSetOfFifty);
+
         }
 
         @Override
