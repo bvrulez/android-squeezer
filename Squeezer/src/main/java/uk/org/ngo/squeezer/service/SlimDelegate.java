@@ -174,10 +174,10 @@ class SlimDelegate {
         mClient.getConnectionState().getHomeMenuHandling().triggerHomeMenuEvent();
     }
 
-    public void addToSetOfIDs(String folderID, Set<String> stringSetOfFifty) {
+    public int addToSetOfIDs(String folderID, Set<String> stringSetOfFifty) {
 //        called from SqueezeService: mDelegate.
         Log.d(TAG, "addToSetOfIDs: BEN");
-        mClient.getConnectionState().addToSetOfIDs(folderID, stringSetOfFifty);
+        return mClient.getConnectionState().addToSetOfIDs(folderID, stringSetOfFifty);
     }
 
     static class Command extends SlimCommand {

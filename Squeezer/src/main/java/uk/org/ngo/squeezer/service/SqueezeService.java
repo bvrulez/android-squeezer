@@ -836,7 +836,12 @@ public class SqueezeService extends Service {
             Log.d(TAG, "onItemsReceived: BEN size: " + stringSetOfFifty.size());
             Log.d(TAG, "onItemsReceived: BEN parameters in callback: " + parameters.toString());
 //          TODO: reduce Set by Set of played items
-            mDelegate.addToSetOfIDs(SqueezeService.this.folderID, stringSetOfFifty);
+            int total = mDelegate.addToSetOfIDs(SqueezeService.this.folderID, stringSetOfFifty);
+            Log.d(TAG, "onItemsReceived: BEN total: " + total);
+            Log.d(TAG, "onItemsReceived: BEN count: " + count);
+            if (start + total >= count) {
+                Log.d(TAG, "onItemsReceived: BEN: All items loaded");
+            }
 
         }
 

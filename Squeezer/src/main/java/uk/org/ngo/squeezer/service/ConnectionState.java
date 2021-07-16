@@ -181,13 +181,14 @@ public class ConnectionState {
     Map<String, Set<String>> playeditemsInFolders = new HashMap<>();
 
 //
-    public void addToSetOfIDs(String folderID, Set<String> stringSetOfFifty) {
+    public int addToSetOfIDs(String folderID, Set<String> stringSetOfFifty) {
 //        called from SlimDelegate: mClient.getConnectionState().addToSetOfIDs(stringSetOfFifty);
         Log.d(TAG, "addToSetOfIDs: BEN with stringSetOfFifty.size(): " + stringSetOfFifty.size());
         BiFunction<Set<String>, Set<String>, Set<String>> biFunction = (set1, set2) -> set1 == null ? set1 : Stream.concat(set1.stream(), set2.stream())
                 .collect(Collectors.toSet());
         itemsInFolders.merge(folderID, stringSetOfFifty, biFunction);
         Log.d(TAG, "addToSetOfIDs: BEN itemsInFolders folderID: " + folderID + " with size: " + itemsInFolders.get(folderID).size());
+        return itemsInFolders.get(folderID).size();
     }
 
     public void addToSetOfPlayedIDs(String folderID, Set<String> playedTracks) {
@@ -195,6 +196,7 @@ public class ConnectionState {
         BiFunction<Set<String>, Set<String>, Set<String>> biFunction = (set1, set2) -> set1 == null ? set1 : Stream.concat(set1.stream(), set2.stream()).collect(Collectors.toSet());
         playeditemsInFolders.merge(folderID, playedTracks, biFunction);
         Log.d(TAG, "addToSetOfPlayedIDs: BEN played tracks");
+//        return
     }
 
 
