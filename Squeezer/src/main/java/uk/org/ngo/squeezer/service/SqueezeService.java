@@ -840,7 +840,8 @@ public class SqueezeService extends Service {
             int total = mDelegate.addToSetOfIDs(mDelegate.getFolderID(), stringSetOfFifty);
             Log.d(TAG, "onItemsReceived: BEN total: " + total);
             Log.d(TAG, "onItemsReceived: BEN count: " + count);
-            if (start + total >= count) {
+            Log.d(TAG, "onItemsReceived: BEN items.size " + items.size());
+            if (start + items.size() >= count) {
                 Log.d(TAG, "onItemsReceived: BEN: All items loaded");
             }
 
