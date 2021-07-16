@@ -177,9 +177,17 @@ public class ConnectionState {
         }
     }
 
+    String folderID;
     Map<String, Set<String>> itemsInFolders = new HashMap<>();
     Map<String, Set<String>> playeditemsInFolders = new HashMap<>();
 
+    public void saveFolderID(String folderID) {
+        this.folderID = folderID;
+    }
+
+    public String getFolderID() {
+        return this.folderID;
+    }
 //
     public int addToSetOfIDs(String folderID, Set<String> stringSetOfFifty) {
 //        called from SlimDelegate: mClient.getConnectionState().addToSetOfIDs(stringSetOfFifty);

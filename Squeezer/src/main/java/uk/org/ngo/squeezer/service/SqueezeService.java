@@ -816,7 +816,8 @@ public class SqueezeService extends Service {
         }
     };
 
-    String folderID;
+//    TODO: Should this be somewhere else?
+//    String folderID;
 
     private final IServiceItemListCallback<MusicFolderItem> musicFolderRandomPlayCallback = new IServiceItemListCallback<MusicFolderItem>() {
         @Override
@@ -836,7 +837,7 @@ public class SqueezeService extends Service {
             Log.d(TAG, "onItemsReceived: BEN size: " + stringSetOfFifty.size());
             Log.d(TAG, "onItemsReceived: BEN parameters in callback: " + parameters.toString());
 //          TODO: reduce Set by Set of played items
-            int total = mDelegate.addToSetOfIDs(SqueezeService.this.folderID, stringSetOfFifty);
+            int total = mDelegate.addToSetOfIDs(mDelegate.getFolderID(), stringSetOfFifty);
             Log.d(TAG, "onItemsReceived: BEN total: " + total);
             Log.d(TAG, "onItemsReceived: BEN count: " + count);
             if (start + total >= count) {
@@ -1478,22 +1479,25 @@ public class SqueezeService extends Service {
         }
 
         public void randomPlayFolder(JiveItem item) throws HandshakeNotCompleteException {
-//            Gets called by BaseActivity.randomPlayFolder
+//          Gets called by BaseActivity.randomPlayFolder
             Log.d(TAG, "randomPlayFolder: BEN");
             SlimCommand command = item.downloadCommand();
 //          TODO maybe implement randomPlayCommand
-            command.params.get("folder_id");
-
-            Log.d(TAG, "randomPlayFolder: BEN command: " + command.toString());
-//            IServiceItemListCallback<?> callback = musicFolderRandomPlayCallback;
-//            Log.d(TAG, "randomPlayFolder: BEN callback: " + callback);
+            String folderID = "NOT_INITIALIZED";
             try {
                 folderID = (String) command.params.get("folder_id");
             } catch (Exception e) {
                 Log.e(TAG, "randomPlayFolder: Exception while casting 'folder_id' to String" + e);
             }
-            Log.d(TAG, "randomPlayFolder: BEN saved folderID to SqueezeService.this.folderID: " + folderID);
+
+            Log.d(TAG, "randomPlayFolder: BEN command: " + command.toString());
+            mDelegate.saveFolderID(folderID);
+            Log.d(TAG, "randomPlayFolder: BEN saved folderID to SqueezeService.this.folderID: " + mDelegate.getFolderID());
+
+//          TODO Change this as the method should only be called for folders (context menu) to:
+//            IServiceItemListCallback<?> callback = musicFolderRandomPlayCallback;
             IServiceItemListCallback<?> callback = ("musicfolder".equals(command.cmd.get(0))) ? musicFolderRandomPlayCallback : songRandomPlayCallback;
+
             Log.d(TAG, "randomPlayFolder: BEN callback: " + callback.toString());
             mDelegate.requestItems(-1,callback).params(command.params).cmd(command.cmd()).exec();
         }

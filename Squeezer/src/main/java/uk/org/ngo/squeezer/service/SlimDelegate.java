@@ -180,6 +180,17 @@ class SlimDelegate {
         return mClient.getConnectionState().addToSetOfIDs(folderID, stringSetOfFifty);
     }
 
+    public void saveFolderID(String folderID) {
+//        called from SqueezeService: mDelegate.
+        Log.d(TAG, "saveFolderID: BEN");
+        mClient.getConnectionState().saveFolderID(folderID);
+    }
+
+    public String getFolderID() {
+        Log.d(TAG, "getFolderID: BEN");
+        return mClient.getConnectionState().getFolderID();
+    }
+    
     static class Command extends SlimCommand {
         final SlimClient slimClient;
         final protected Player player;
